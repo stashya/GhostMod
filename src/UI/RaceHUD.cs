@@ -141,13 +141,13 @@ namespace GhostMod.UI
             hintStyle.alignment = TextAnchor.MiddleCenter;
             hintStyle.normal.textColor = new Color(0.6f, 0.6f, 0.6f);
             
-            string hintText = "[ESC] cancel";
+            string hintText = "[ESC] cancel   [M] restart";
             if (!isFirstRun)
             {
                 hintText += ghostVisible ? "   [H] hide" : "   [H] show";
             }
             
-            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height - 35, 200, 20), hintText, hintStyle);
+            GUI.Label(new Rect(Screen.width / 2 - 150, Screen.height - 35, 300, 20), hintText, hintStyle);
         }
         
         #endregion

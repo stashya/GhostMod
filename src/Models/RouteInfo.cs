@@ -3,61 +3,83 @@ using UnityEngine;
 namespace GhostMod.Models
 {
     /// <summary>
-    /// Defines a racing route with start/finish points
+    /// Defines a racing route with start/finish information
     /// </summary>
     public class RouteInfo
     {
-        /// <summary>
-        /// Display name for the route
-        /// </summary>
-        public string RouteName;
+        public string RouteName { get; private set; }
+        public string SceneName { get; private set; }
+        public string StartPointP1Name { get; private set; }
+        public string StartPointP2Name { get; private set; }
+        public string FinishZoneName { get; private set; }
+        public Vector3 FallbackStartP1 { get; private set; }
+        public Vector3 FallbackStartP2 { get; private set; }
+        public Quaternion FallbackRotation { get; private set; }
         
         /// <summary>
-        /// Unity scene name where this route exists
+        /// Optional custom finish position. If set, creates a trigger box here instead of using existing zones.
         /// </summary>
-        public string SceneName;
+        public Vector3? CustomFinishPosition { get; private set; }
         
         /// <summary>
-        /// Name of the P1 starting point GameObject (first run / challenger position)
+        /// Size of the custom finish trigger box (default 30x10x30)
         /// </summary>
-        public string StartPointP1Name;
-        
-        /// <summary>
-        /// Name of the P2 starting point GameObject (ghost position when challenging)
-        /// </summary>
-        public string StartPointP2Name;
-        
-        /// <summary>
-        /// Name of the finish zone GameObject
-        /// </summary>
-        public string FinishZoneName;
-        
-        /// <summary>
-        /// Fallback position for P1 if GameObject not found
-        /// </summary>
-        public Vector3 FallbackStartP1;
-        
-        /// <summary>
-        /// Fallback position for P2 if GameObject not found
-        /// </summary>
-        public Vector3 FallbackStartP2;
-        
-        /// <summary>
-        /// Fallback rotation if start point not found
-        /// </summary>
-        public Quaternion FallbackRotation;
+        public Vector3 CustomFinishSize { get; private set; }
 
-        public RouteInfo(string name, string scene, string p1, string p2, string finish,
-            Vector3 fbP1, Vector3 fbP2, Quaternion fbRot)
+        /// <summary>
+        /// Constructor without custom finish (uses existing FinishZone objects)
+        /// </summary>
+        public RouteInfo(string routeName, string sceneName, string startP1, string startP2, string finishZone,
+            Vector3 fallbackP1, Vector3 fallbackP2, Quaternion fallbackRotation)
         {
-            RouteName = name;
-            SceneName = scene;
-            StartPointP1Name = p1;
-            StartPointP2Name = p2;
-            FinishZoneName = finish;
-            FallbackStartP1 = fbP1;
-            FallbackStartP2 = fbP2;
-            FallbackRotation = fbRot;
+            RouteName = routeName;
+            SceneName = sceneName;
+            StartPointP1Name = startP1;
+            StartPointP2Name = startP2;
+            FinishZoneName = finishZone;
+            FallbackStartP1 = fallbackP1;
+            FallbackStartP2 = fallbackP2;
+            FallbackRotation = fallbackRotation;
+            CustomFinishPosition = null;
+            CustomFinishSize = new Vector3(30f, 10f, 30f);
+        }
+
+        /// <summary>
+        /// Constructor with custom finish position (creates a trigger box at specified location)
+        /// </summary>
+        public RouteInfo(string routeName, string sceneName, string startP1, string startP2, string finishZone,
+            Vector3 fallbackP1, Vector3 fallbackP2, Quaternion fallbackRotation,
+            Vector3 customFinishPos, Vector3 customFinishSize)
+        {
+            RouteName = routeName;
+            SceneName = sceneName;
+            StartPointP1Name = startP1;
+            StartPointP2Name = startP2;
+            FinishZoneName = finishZone;
+            FallbackStartP1 = fallbackP1;
+            FallbackStartP2 = fallbackP2;
+            FallbackRotation = fallbackRotation;
+            CustomFinishPosition = customFinishPos;
+            CustomFinishSize = customFinishSize;
+        }
+        
+        /// <summary>
+        /// Constructor with custom finish position (default size)
+        /// </summary>
+        public RouteInfo(string routeName, string sceneName, string startP1, string startP2, string finishZone,
+            Vector3 fallbackP1, Vector3 fallbackP2, Quaternion fallbackRotation,
+            Vector3 customFinishPos)
+        {
+            RouteName = routeName;
+            SceneName = sceneName;
+            StartPointP1Name = startP1;
+            StartPointP2Name = startP2;
+            FinishZoneName = finishZone;
+            FallbackStartP1 = fallbackP1;
+            FallbackStartP2 = fallbackP2;
+            FallbackRotation = fallbackRotation;
+            CustomFinishPosition = customFinishPos;
+            CustomFinishSize = new Vector3(30f, 10f, 30f);
         }
     }
 }

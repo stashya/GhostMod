@@ -67,6 +67,7 @@ namespace GhostMod
         private GhostData recordingData;
         private GhostData personalBestGhost;
         private string selectedRouteKey;
+        private SharedGhostInfo currentSharedGhostInfo;
         
         private float raceStartTime;
         private float lastSampleTime;
@@ -117,6 +118,14 @@ namespace GhostMod
         
         private void Update()
         {
+            // Enforce camera control every frame when menu is open
+            if (!warmTofuModDetected && cameraWasDisabled)
+            {
+                ObscuredPrefs.SetInt("ONTYPING", 10);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            
             // Lazy create watermark
             if (watermarkLabel == null)
             {
@@ -152,6 +161,12 @@ namespace GhostMod
                     UpdateRecording();
                     CheckTimeout();
                     CheckCancellation();
+                    
+                    // M key to restart race
+                    if (Input.GetKeyDown(KeyCode.M))
+                    {
+                        RestartCurrentRace();
+                    }
                     break;
                     
                 case GhostRaceState.Racing:
@@ -165,16 +180,13 @@ namespace GhostMod
                     {
                         ghostCarService.ToggleVisibility();
                     }
+                    
+                    // M key to restart race
+                    if (Input.GetKeyDown(KeyCode.M))
+                    {
+                        RestartCurrentRace();
+                    }
                     break;
-            }
-        }
-        
-        private void LateUpdate()
-        {
-            // Ensure camera stays disabled while menu is open (standalone mode)
-            if (!warmTofuModDetected && cameraWasDisabled)
-            {
-                ObscuredPrefs.SetInt("ONTYPING", 10);
             }
         }
         
@@ -298,6 +310,7 @@ namespace GhostMod
             
             CloseMenu();
             isRacingSharedGhost = false;
+            currentSharedGhostInfo = null;
             
             currentRoute = Routes.All[routeKey];
             selectedRouteKey = routeKey;
@@ -352,6 +365,7 @@ namespace GhostMod
             
             CloseMenu();
             isRacingSharedGhost = true;
+            currentSharedGhostInfo = sharedGhost;
             
             currentRoute = Routes.All[routeKey];
             selectedRouteKey = routeKey;
@@ -375,6 +389,7 @@ namespace GhostMod
             {
                 Plugin.Log.LogError("Failed to load shared ghost!");
                 isRacingSharedGhost = false;
+                currentSharedGhostInfo = null;
                 return;
             }
             
@@ -396,6 +411,41 @@ namespace GhostMod
             };
             
             StartCoroutine(StartCountdown());
+        }
+        
+        /// <summary>
+        /// Restart the current race from the beginning
+        /// </summary>
+        public void RestartCurrentRace()
+        {
+            if (string.IsNullOrEmpty(selectedRouteKey) || currentRoute == null)
+            {
+                return;
+            }
+            
+            // Store restart info before cleanup
+            string routeToRestart = selectedRouteKey;
+            bool wasRacingSharedGhost = isRacingSharedGhost;
+            SharedGhostInfo sharedGhostToRestart = currentSharedGhostInfo;
+            
+            // Stop any running coroutines
+            StopAllCoroutines();
+            
+            // Clean up current race state
+            CleanupRace();
+            
+            // Reset state
+            CurrentState = GhostRaceState.Idle;
+            
+            // Restart with same route and mode
+            if (wasRacingSharedGhost && sharedGhostToRestart != null)
+            {
+                StartSharedGhostRace(routeToRestart, sharedGhostToRestart);
+            }
+            else
+            {
+                StartGhostRace(routeToRestart);
+            }
         }
         
         private IEnumerator StartCountdown()
@@ -465,8 +515,8 @@ namespace GhostMod
                 playerCollider.AppelRPCSetGhostModeV2(10);
             }
             
-            // Setup finish zone
-            SetupFinishZone();
+            // Setup finish zones (both FinishZone and SRToffuArriver)
+            SetupFinishZones();
             
             // Reset car state
             playerCar.speed = 0f;
@@ -773,7 +823,15 @@ namespace GhostMod
         {
             ghostCarService.Cleanup();
             
+            // Destroy custom finish trigger if exists
+            if (customFinishTrigger != null)
+            {
+                Destroy(customFinishTrigger);
+                customFinishTrigger = null;
+            }
+            
             isRacingSharedGhost = false;
+            currentSharedGhostInfo = null;
             personalBestGhost = null;
             
             if (playerCar != null)
@@ -822,18 +880,90 @@ namespace GhostMod
             return null;
         }
         
-        private void SetupFinishZone()
+        // Custom finish trigger (created for routes with CustomFinishPosition)
+        private GameObject customFinishTrigger;
+        
+        private void SetupFinishZones()
         {
-            FinishZone[] finishZones = FindObjectsOfType<FinishZone>();
-            
-            foreach (var zone in finishZones)
+            // Clean up any previous custom trigger
+            if (customFinishTrigger != null)
             {
-                GhostFinishTrigger trigger = zone.gameObject.GetComponent<GhostFinishTrigger>();
-                if (trigger == null)
-                {
-                    trigger = zone.gameObject.AddComponent<GhostFinishTrigger>();
-                }
+                Destroy(customFinishTrigger);
+                customFinishTrigger = null;
+            }
+            
+            // Check if this route has a custom finish position
+            if (currentRoute.CustomFinishPosition.HasValue)
+            {
+                // Create custom finish trigger box
+                customFinishTrigger = new GameObject("GhostMod_CustomFinish");
+                customFinishTrigger.transform.position = currentRoute.CustomFinishPosition.Value;
+                
+                // Add box collider as trigger
+                BoxCollider collider = customFinishTrigger.AddComponent<BoxCollider>();
+                collider.isTrigger = true;
+                collider.size = currentRoute.CustomFinishSize;
+                
+                // Add rigidbody (required for trigger detection)
+                Rigidbody rb = customFinishTrigger.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                
+                // Add our finish trigger
+                GhostFinishTrigger trigger = customFinishTrigger.AddComponent<GhostFinishTrigger>();
                 trigger.Manager = this;
+            }
+            else
+            {
+                // Use existing game objects for finish detection
+                
+                // Attach to all FinishZone objects (for downhill finish)
+                FinishZone[] finishZones = FindObjectsOfType<FinishZone>();
+                foreach (var zone in finishZones)
+                {
+                    GhostFinishTrigger trigger = zone.gameObject.GetComponent<GhostFinishTrigger>();
+                    if (trigger == null)
+                    {
+                        trigger = zone.gameObject.AddComponent<GhostFinishTrigger>();
+                    }
+                    trigger.Manager = this;
+                }
+                
+                // Attach to all SRToffuArriver objects (for uphill finish)
+                SRToffuArriver[] tofuArrivers = FindObjectsOfType<SRToffuArriver>();
+                foreach (var arriver in tofuArrivers)
+                {
+                    GhostFinishTrigger trigger = arriver.gameObject.GetComponent<GhostFinishTrigger>();
+                    if (trigger == null)
+                    {
+                        trigger = arriver.gameObject.AddComponent<GhostFinishTrigger>();
+                    }
+                    trigger.Manager = this;
+                }
+                
+                // Attach to all SRSatomiTofu objects (tofu shop - may be finish on some maps)
+                SRSatomiTofu[] satomiTofus = FindObjectsOfType<SRSatomiTofu>();
+                foreach (var satomi in satomiTofus)
+                {
+                    GhostFinishTrigger trigger = satomi.gameObject.GetComponent<GhostFinishTrigger>();
+                    if (trigger == null)
+                    {
+                        trigger = satomi.gameObject.AddComponent<GhostFinishTrigger>();
+                    }
+                    trigger.Manager = this;
+                }
+                
+                // Attach to all SRToffuLivraison objects (delivery zones - may be finish on some maps)
+                SRToffuLivraison[] tofuLivraisons = FindObjectsOfType<SRToffuLivraison>();
+                foreach (var livraison in tofuLivraisons)
+                {
+                    GhostFinishTrigger trigger = livraison.gameObject.GetComponent<GhostFinishTrigger>();
+                    if (trigger == null)
+                    {
+                        trigger = livraison.gameObject.AddComponent<GhostFinishTrigger>();
+                    }
+                    trigger.Manager = this;
+                }
             }
         }
         

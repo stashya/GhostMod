@@ -25,10 +25,21 @@ Ghost Racing mod for Initial Drift Online. Race against your own best times or c
 
 ## Usage
 
-- Press **G** to open the Ghost Menu
-- Select a route and start racing
-- Your best times are automatically recorded
-- Import/export ghosts to race against friends
+### Controls
+
+| Key | Action |
+|-----|--------|
+| **G** | Open/close Ghost Menu |
+| **M** | Restart current race |
+| **H** | Toggle ghost visibility (during race) |
+| **ESC** | Cancel current race |
+
+### Getting Started
+
+1. Press **G** to open the Ghost Menu
+2. Select a route and start racing
+3. Your best times are automatically recorded
+4. Import/export ghosts to race against friends
 
 ## Building from Source
 

@@ -16,12 +16,17 @@ namespace GhostMod.Components
         
         private void OnTriggerEnter(Collider other)
         {
-            if (Manager == null) return;
+            if (Manager == null)
+            {
+                return;
+            }
             
             // Only trigger during active race states
             if (Manager.CurrentState != GhostRacingManager.GhostRaceState.Recording &&
                 Manager.CurrentState != GhostRacingManager.GhostRaceState.Racing)
+            {
                 return;
+            }
             
             // Check if it's the player's car
             var photonNetwork = other.GetComponentInParent<RCC_PhotonNetwork>();

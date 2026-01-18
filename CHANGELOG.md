@@ -5,6 +5,17 @@ All notable changes to GhostMod will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-18
+
+### Added
+- Race restart keybind (press M during race to restart immediately)
+- HUD now shows restart hint alongside other controls
+
+### Changed
+- Removed debug coordinate display from production build
+- Cleaned up verbose debug logging for production release
+- Improved restart handling for shared ghost races
+
 ## [1.0.0] - 2025-01-18
 
 ### Added
