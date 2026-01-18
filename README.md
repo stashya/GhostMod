@@ -2,6 +2,10 @@
 
 Ghost Racing mod for Initial Drift Online. Race against your own best times or challenge other players' ghost recordings.
 
+[![Watch the trailer](https://img.youtube.com/vi/Yj0NhvEEoR0/maxresdefault.jpg)](https://www.youtube.com/watch?v=Yj0NhvEEoR0)
+
+![Starting Line](assets/starting.png)
+
 ## Features
 
 - **Record Ghosts** - Automatically saves your best runs on any route
@@ -9,6 +13,8 @@ Ghost Racing mod for Initial Drift Online. Race against your own best times or c
 - **Share Ghosts** - Export and import ghost files with friends
 - **Ghost Library** - Manage all your ghost recordings
 - **Visual Customization** - Customize ghost car appearance
+
+![Racing Ghost](assets/racing.gif)
 
 ## Installation
 
@@ -20,26 +26,23 @@ Ghost Racing mod for Initial Drift Online. Race against your own best times or c
 ### Install the Mod
 
 1. Download `GhostMod.dll` from [Releases](https://github.com/stashya/GhostMod/releases)
-2. Copy to `[Game Folder]/BepInEx/plugins/GhostMod/GhostMod.dll`
+2. Drag into `C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\BepInEx\plugins\`
+   (or wherever your game is installed)
 3. Launch the game
 
 ## Usage
 
-### Controls
+- Press **G** to open the Ghost Menu
+- Select a route and start racing
+- Your best times are automatically recorded
+- Press **H** during a race to hide/show ghost
+- Press **ESC** to cancel a race
 
-| Key | Action |
-|-----|--------|
-| **G** | Open/close Ghost Menu |
-| **M** | Restart current race |
-| **H** | Toggle ghost visibility (during race) |
-| **ESC** | Cancel current race |
+## Community
 
-### Getting Started
+[![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/QwwwkGa3vF)
 
-1. Press **G** to open the Ghost Menu
-2. Select a route and start racing
-3. Your best times are automatically recorded
-4. Import/export ghosts to race against friends
+Join our Discord for support, sharing ghosts, and updates!
 
 ## Building from Source
 
@@ -83,7 +86,6 @@ GhostMod/
 ├── GhostMod.csproj            # Project file
 └── build.bat                  # Build script
 ```
-
 
 ## License
 
