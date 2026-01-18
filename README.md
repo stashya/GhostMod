@@ -70,25 +70,9 @@ GhostMod/
 │   ├── Components/            # Unity components
 │   └── UI/                    # Menu and HUD
 ├── GhostMod.csproj            # Project file
-├── build.bat                  # Build script
-└── setup-github.bat           # GitHub setup helper
+└── build.bat                  # Build script
 ```
 
-### First Time Setup for GitHub
-
-1. Create a new repository on [GitHub](https://github.com/new)
-2. Run `setup-github.bat` and follow the prompts
-
-Or manually:
-
-```bash
-git init
-git add .
-git commit -m "Initial release v1.0.0"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/GhostMod.git
-git push -u origin main
-```
 
 ## License
 
