@@ -24,7 +24,7 @@
   -->
   <PropertyGroup>
     <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online</GamePath>
-    <ManagedPath>$(GamePath)\Initial Drift Online_Data\Managed</ManagedPath>
+    <ManagedPath>$(GamePath)\Initial Drift_Data\Managed</ManagedPath>
     <BepInExPath>$(GamePath)\BepInEx</BepInExPath>
   </PropertyGroup>
 
@@ -58,6 +58,26 @@
       <HintPath>$(ManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.VehiclesModule">
+      <HintPath>$(ManagedPath)\UnityEngine.VehiclesModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="PhotonUnityNetworking">
       <HintPath>$(ManagedPath)\PhotonUnityNetworking.dll</HintPath>
       <Private>false</Private>
@@ -66,8 +86,8 @@
       <HintPath>$(ManagedPath)\PhotonRealtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="CodeStage.AntiCheatToolkit.Runtime">
-      <HintPath>$(ManagedPath)\CodeStage.AntiCheatToolkit.Runtime.dll</HintPath>
+    <Reference Include="ACTk.Runtime">
+      <HintPath>$(ManagedPath)\ACTk.Runtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
     
@@ -80,11 +100,6 @@
       <HintPath>$(BepInExPath)\core\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-  </ItemGroup>
-
-  <!-- Include all source files -->
-  <ItemGroup>
-    <Compile Include="src\**\*.cs" />
   </ItemGroup>
 
 </Project>
