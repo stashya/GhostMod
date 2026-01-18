@@ -2,8 +2,6 @@
 
 Ghost Racing mod for Initial Drift Online. Race against your own best times or challenge other players' ghost recordings.
 
-[![Watch the trailer](https://img.youtube.com/vi/Yj0NhvEEoR0/maxresdefault.jpg)](https://www.youtube.com/watch?v=Yj0NhvEEoR0)
-
 ![Starting Line](assets/starting.png)
 
 ## Features
@@ -36,6 +34,7 @@ Ghost Racing mod for Initial Drift Online. Race against your own best times or c
 - Select a route and start racing
 - Your best times are automatically recorded
 - Press **H** during a race to hide/show ghost
+- Press **M** during a race to restart the race
 - Press **ESC** to cancel a race
 
 ## Community
